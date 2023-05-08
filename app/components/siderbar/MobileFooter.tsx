@@ -4,8 +4,11 @@ import { NextPage } from "next";
 import useConversation from "@/app/hooks/useConversation";
 import useRoutes from "@/app/hooks/useRoutes";
 import MobileItem from "./MobileItem";
+import { User } from "@prisma/client";
 
-interface MobileFooterProps {}
+interface MobileFooterProps {
+  currentUser: User | null;
+}
 
 const MobileFooter: NextPage<MobileFooterProps> = () => {
   const routes = useRoutes();
