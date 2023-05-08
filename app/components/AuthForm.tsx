@@ -1,7 +1,7 @@
 "use client";
 
 import { NextPage } from "next";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import Input from "./inputs/Input";
 import Button from "./Button";
@@ -9,15 +9,25 @@ import AuthSocialButton from "./AuthSocialButton";
 import { BsGithub, BsGoogle } from "react-icons/bs";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { redirect, useRouter } from "next/navigation";
 
 type AuthFormVariant = "LOGIN" | "REGISTER";
 
 interface AuthFormProps {}
 
 const AuthForm: NextPage<AuthFormProps> = () => {
+  const session = useSession();
+  const router = useRouter();
+
   const [variant, setVariant] = useState<AuthFormVariant>("LOGIN");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (session?.status === "authenticated") {
+      router.push("/users");
+    }
+  }, [session]);
 
   const toggleVariant = useCallback(() => {
     if (variant === "LOGIN") {
@@ -54,17 +64,21 @@ const AuthForm: NextPage<AuthFormProps> = () => {
           }
           if (response?.ok && !response?.error) {
             toast.success("Logged in successfully!");
+            router.push("/users");
           }
         });
       }
 
       if (variant === "REGISTER") {
         // register
-        await axios.post("/api/register", data).catch((error) => {
-          console.log(error);
+        await axios
+          .post("/api/register", data)
+          .then(() => signIn("credentials", { ...data, redirect: false }))
+          .catch((error) => {
+            console.log(error);
 
-          toast.error("Something went wrong! Please try again.");
-        });
+            toast.error("Something went wrong! Please try again.");
+          });
       }
     } catch (error) {
       console.log(error);
