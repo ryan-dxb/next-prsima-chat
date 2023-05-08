@@ -7,6 +7,9 @@ import Input from "./inputs/Input";
 import Button from "./Button";
 import AuthSocialButton from "./AuthSocialButton";
 import { BsGithub, BsGoogle } from "react-icons/bs";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 type AuthFormVariant = "LOGIN" | "REGISTER";
 
@@ -41,9 +44,27 @@ const AuthForm: NextPage<AuthFormProps> = () => {
     try {
       if (variant === "LOGIN") {
         // login
+        await signIn("credentials", {
+          ...data,
+          redirect: false,
+        }).then((response) => {
+          console.log(response);
+          if (response?.error) {
+            toast.error(response.error);
+          }
+          if (response?.ok && !response?.error) {
+            toast.success("Logged in successfully!");
+          }
+        });
       }
+
       if (variant === "REGISTER") {
         // register
+        await axios.post("/api/register", data).catch((error) => {
+          console.log(error);
+
+          toast.error("Something went wrong! Please try again.");
+        });
       }
     } catch (error) {
       console.log(error);
@@ -54,6 +75,23 @@ const AuthForm: NextPage<AuthFormProps> = () => {
 
   const socialLogin = (action: string) => {
     // social login
+    setIsLoading(true);
+
+    signIn(action, {
+      redirect: false,
+    })
+      .then((response) => {
+        console.log(response);
+        if (response?.error) {
+          toast.error(response.error);
+        }
+        if (response?.ok && !response?.error) {
+          toast.success("Logged in successfully!");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
