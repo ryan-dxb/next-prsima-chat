@@ -56,7 +56,7 @@ const Form: NextPage<FormProps> = () => {
       <CldUploadButton
         options={{ maxFiles: 1 }}
         onUpload={handleUpload}
-        uploadPreset="pgc9ehd5"
+        uploadPreset="qxlhozlb"
       >
         <HiPhoto size={30} className="text-sky-500" />
       </CldUploadButton>
