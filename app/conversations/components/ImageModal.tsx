@@ -5,7 +5,7 @@ import Image from "next/image";
 interface ImageModalProps {
   isOpen?: boolean;
   onClose: () => void;
-  src?: string | null;
+  src: string;
 }
 
 const ImageModal: NextPage<ImageModalProps> = ({

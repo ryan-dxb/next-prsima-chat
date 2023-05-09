@@ -9,6 +9,8 @@ import { NextPage } from "next";
 import { useMemo, useState, Fragment } from "react";
 import { IoClose, IoTrash } from "react-icons/io5";
 import ConfirmModal from "./ConfirmModal";
+import AvatarGroup from "@/app/components/AvatarGroup";
+import useActiveList from "@/app/hooks/useActiveList";
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -34,16 +36,16 @@ const ProfileDrawer: NextPage<ProfileDrawerProps> = ({
     return data.name || otherUser.name;
   }, [data.name, otherUser.name]);
 
-  // const { members } = useActiveList();
-  // const isActive = members.indexOf(otherUser?.email!) !== -1;
+  const { members } = useActiveList();
+  const isActive = members.indexOf(otherUser?.email!) !== -1;
 
-  // const statusText = useMemo(() => {
-  //   if (data.isGroup) {
-  //     return `${data.users.length} members`;
-  //   }
+  const statusText = useMemo(() => {
+    if (data.isGroup) {
+      return `${data.users.length} members`;
+    }
 
-  //   return isActive ? "Active" : "Offline";
-  // }, [data, isActive]);
+    return isActive ? "Active" : "Offline";
+  }, [data, isActive]);
 
   return (
     <>
@@ -96,15 +98,15 @@ const ProfileDrawer: NextPage<ProfileDrawerProps> = ({
                       <div className="relative mt-6 flex-1 px-4 sm:px-6">
                         <div className="flex flex-col items-center">
                           <div className="mb-2">
-                            {/* {data.isGroup ? (
+                            {data.isGroup ? (
                               <AvatarGroup users={data.users} />
-                            ) : ( */}
-                            <Avatar user={otherUser} />
-                            {/* )} */}
+                            ) : (
+                              <Avatar user={otherUser} />
+                            )}
                           </div>
                           <div>{title}</div>
                           <div className="text-sm text-gray-500">
-                            {/* {statusText} */}
+                            {statusText}
                             Active
                           </div>
                           <div className="flex gap-10 my-8">
